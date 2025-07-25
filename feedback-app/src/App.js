@@ -1,38 +1,38 @@
-import React, { useState } from "react";
-import FeedbackButtons from "./FeedbackButtons";
-import Statistics from "./Statistics";
-import "./App.css";  // ✅ Import CSS
+import React, { useState } from 'react';
+import './App.css';
+import FeedbackButtons from './FeedbackButtons';
+import Statistics from './Statistics';
 
 function App() {
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0);
-  const [bad, setBad] = useState(0);
+  const [feedback, setFeedback] = useState({
+    good: 0,
+    neutral: 0,
+    bad: 0
+  });
 
-  const total = good + neutral + bad;
-  const average = total ? (good - bad) / total : 0;
-  const positive = total ? (good / total) * 100 : 0;
+  const handleFeedback = (type) => {
+    setFeedback((prevFeedback) => ({
+      ...prevFeedback,
+      [type]: prevFeedback[type] + 1
+    }));
+  };
+
+  const total = feedback.good + feedback.neutral + feedback.bad;
+  const average = total === 0 ? 0 : (feedback.good - feedback.bad) / total;
+  const positivePercent = total === 0 ? 0 : (feedback.good / total) * 100;
 
   return (
-    <div className="container">
+    <div className="App">
       <h1>User Feedback</h1>
-      <FeedbackButtons
-        onGood={() => setGood(good + 1)}
-        onNeutral={() => setNeutral(neutral + 1)}
-        onBad={() => setBad(bad + 1)}
+      <FeedbackButtons onFeedback={handleFeedback} />
+      <Statistics
+        good={feedback.good}
+        neutral={feedback.neutral}
+        bad={feedback.bad}
+        total={total}
+        average={average}
+        positivePercent={positivePercent}
       />
-      <h2>Statistics</h2>
-      {total > 0 ? (
-        <Statistics
-          good={good}
-          neutral={neutral}
-          bad={bad}
-          total={total}
-          average={average}
-          positive={positive}
-        />
-      ) : (
-        <p>No feedback yet</p>
-      )}
     </div>
   );
 }
